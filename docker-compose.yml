@@ -1,6 +1,42 @@
 services:
-  web:
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: on-failure
+    environment:
+      MYSQL_ROOT_PASSWORD: grad1e
+      MYSQL_DATABASE: todo_app
+    ports:
+      - 3306:3306
+    volumes:
+      - C:/Users/Daryl/docker-volumes/dev-mysql:/var/lib/mysql
+    networks:
+      - api-server
+    healthcheck:
+      test: mysqladmin ping -h localhost -u $$MYSQL_USER --password=$$MYSQL_PASSWORD
+      start_period: 10s
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  phpmyadmin:
+    image: phpmyadmin
+    restart: on-failure
+    ports:
+      - 8081:80
+    environment:
+      - PMA_HOST=db
+      - PMA_PORT=3306
+      - PMA_USER=root
+      - PMA_PASSWORD=grad1e
+    depends_on:
+      - db
+    networks:
+      - api-server
+
+  api:
     build: .
+    restart: on-failure
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 3306
@@ -10,28 +46,10 @@ services:
     ports:
       - 8080:8080
     depends_on:
-      - db
-    links:
-      - db
+      db:
+        condition: service_healthy
+    networks:
+      - api-server
 
-  db:
-    image: mysql
-    command: --default-authentication-plugin=mysql_native_password
-    restart: always
-    environment:
-      MYSQL_ROOT_PASSWORD: grad1e
-      MYSQL_DATABASE: todo_app
-    ports:
-      - 3306:3306
-    volumes:
-      - /home/daryl/dev-mysql:/var/lib/mysql
-
-  phpmyadmin:
-    image: phpmyadmin
-    restart: always
-    ports:
-      - 8081:80
-    environment:
-      - PMA_ARBITRARY=1
-    links:
-      - db
+networks:
+  api-server:
