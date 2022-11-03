@@ -1,6 +1,6 @@
 package dev.daryl.routes
 
-import dev.daryl.data.models.ToDoAdd
+import dev.daryl.data.models.ToDoAddModel
 import dev.daryl.repository.TodoRepositoryImpl
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -32,13 +32,13 @@ fun Route.todoRoutes() {
         }
 
         post {
-            val receivedTodo = call.receive<ToDoAdd>()
+            val receivedTodo = call.receive<ToDoAddModel>()
             val todo = repository.addToDo(receivedTodo)
             call.respond(todo)
         }
 
         put("/{id}") {
-            val receivedTodo = call.receive<ToDoAdd>()
+            val receivedTodo = call.receive<ToDoAddModel>()
             val id = call.parameters["id"]?.toIntOrNull()
             if (id == null) {
                 call.respond(HttpStatusCode.BadRequest)

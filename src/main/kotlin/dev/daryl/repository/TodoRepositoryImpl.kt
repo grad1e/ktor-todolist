@@ -1,71 +1,69 @@
 package dev.daryl.repository
 
-import dev.daryl.data.models.ToDo
-import dev.daryl.data.models.ToDoAdd
-import dev.daryl.data.models.ToDos
+import dev.daryl.data.models.ToDoModel
+import dev.daryl.data.models.ToDoAddModel
+import dev.daryl.data.models.ToDosTable
+import dev.daryl.data.models.TodoEntity
+import org.jetbrains.exposed.dao.*
 import org.jetbrains.exposed.sql.*
 import org.jetbrains.exposed.sql.SqlExpressionBuilder.eq
 import org.jetbrains.exposed.sql.transactions.transaction
 
 class TodoRepositoryImpl : ToDoRepository {
 
-    override fun getAllTodos(): List<ToDo> {
+    override fun getAllTodos(): List<ToDoModel> {
         return transaction {
-            ToDos.selectAll().map {
-                ToDo(
-                    id = it[ToDos.id],
-                    title = it[ToDos.title],
-                    done = it[ToDos.done]
+            TodoEntity.all().map {
+                ToDoModel(
+                    id = it.id.value,
+                    title = it.title,
+                    done = it.done
                 )
             }
         }
     }
 
-    override fun getToDo(id: Int): ToDo? {
+    override fun getToDo(id: Int): ToDoModel? {
         return transaction {
-            ToDos.select {
-                ToDos.id eq id
+            TodoEntity.find {
+                ToDosTable.id eq id
             }.singleOrNull()?.let {
-                ToDo(
-                    id = it[ToDos.id],
-                    title = it[ToDos.title],
-                    done = it[ToDos.done]
+                ToDoModel(
+                    id = it.id.value,
+                    title = it.title,
+                    done = it.done
                 )
             }
         }
     }
 
-    override fun addToDo(item: ToDoAdd): ToDo {
+    override fun addToDo(item: ToDoAddModel): ToDoModel {
         return transaction {
-            ToDos.insert {
-                it[title] = item.title
-                it[done] = item.done
-            }.resultedValues?.singleOrNull()?.let {
-                ToDo(
-                    id = it[ToDos.id],
-                    title = it[ToDos.title],
-                    done = it[ToDos.done]
-                )
-            }!!
+            val addedTodo = TodoEntity.new {
+                title = item.title!!
+                done = item.done!!
+            }
+            ToDoModel(
+                id = addedTodo.id.value,
+                title = addedTodo.title,
+                done = addedTodo.done
+            )
         }
     }
 
     override fun removeToDo(id: Int): Boolean {
-        val count = transaction {
-            ToDos.deleteWhere {
-                ToDos.id eq id
-            }
+        return transaction {
+            TodoEntity.findById(id)?.delete()
+            TodoEntity.findById(id) == null
         }
-        return count > 0
     }
 
-    override fun updateToDo(id: Int, item: ToDoAdd): Boolean {
-        val count = transaction {
-            ToDos.update(where = { ToDos.id eq id }) {
-                it[title] = item.title
-                it[done] = item.done
-            }
+    override fun updateToDo(id: Int, item: ToDoAddModel): Boolean {
+        return transaction {
+            val todo = TodoEntity.findById(id)
+            todo?.title = item.title!!
+            todo?.done = item.done!!
+            true
         }
-        return count > 0
     }
 }

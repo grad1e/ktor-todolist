@@ -1,6 +1,6 @@
 package dev.daryl.plugins
 
-import dev.daryl.data.models.ToDos
+import dev.daryl.data.models.ToDosTable
 import io.ktor.server.application.*
 import org.jetbrains.exposed.sql.Database
 import org.jetbrains.exposed.sql.SchemaUtils
@@ -26,7 +26,7 @@ fun Application.configureDatabase() {
 
     transaction {
         addLogger(StdOutSqlLogger)
-        SchemaUtils.createMissingTablesAndColumns(ToDos)
+        SchemaUtils.createMissingTablesAndColumns(ToDosTable)
     }
 
 }

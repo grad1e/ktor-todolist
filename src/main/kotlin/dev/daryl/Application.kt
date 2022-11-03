@@ -1,9 +1,6 @@
 package dev.daryl
 
-import dev.daryl.plugins.configureContentNegotiation
-import dev.daryl.plugins.configureDatabase
-import dev.daryl.plugins.configureLogging
-import dev.daryl.plugins.configureRouting
+import dev.daryl.plugins.*
 import dev.daryl.routes.*
 import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
@@ -20,4 +17,6 @@ fun Application.module() {
     configureContentNegotiation()
     configureRouting()
     configureDatabase()
+    configureRequestValidation()
+    configureStatusPages()
 }

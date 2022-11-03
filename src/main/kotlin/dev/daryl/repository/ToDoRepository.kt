@@ -1,18 +1,18 @@
 package dev.daryl.repository
 
-import dev.daryl.data.models.ToDoAdd
-import dev.daryl.data.models.ToDo
+import dev.daryl.data.models.ToDoAddModel
+import dev.daryl.data.models.ToDoModel
 
 interface ToDoRepository {
 
-    fun getAllTodos(): List<ToDo>
+    fun getAllTodos(): List<ToDoModel>
 
-    fun getToDo(id: Int): ToDo?
+    fun getToDo(id: Int): ToDoModel?
 
-    fun addToDo(item: ToDoAdd): ToDo
+    fun addToDo(item: ToDoAddModel): ToDoModel
 
     fun removeToDo(id: Int): Boolean
 
-    fun updateToDo(id: Int, item: ToDoAdd): Boolean
+    fun updateToDo(id: Int, item: ToDoAddModel): Boolean
 
 }
