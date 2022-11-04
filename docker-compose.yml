@@ -57,3 +57,4 @@ networks:
   api-server:
   traefik:
     external: true
+    name: traefik-proxy
