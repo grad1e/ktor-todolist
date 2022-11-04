@@ -20,6 +20,8 @@ services:
 
   phpmyadmin:
     image: phpmyadmin
+    labels:
+      - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.grad1e.ddns.net`)
     ports:
       - 8081:80
     environment:
@@ -29,22 +31,29 @@ services:
       - db
     networks:
       - api-server
+      - traefik
 
   api:
     build: .
+    labels:
+      - traefik.http.routers.api.rule=(Host(`todo.grad1e.ddns.net`) && PathPrefix('/api'))
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 3306
       DATABASE_NAME: todo_app
       DATABASE_USER: root
       DATABASE_PASSWORD: grad1e
+      DEVELOPMENT: true
     ports:
-      - 8080:8080
+      - 8082:8080
     depends_on:
       db:
         condition: service_healthy
     networks:
       - api-server
+      - traefik
 
 networks:
   api-server:
+  traefik:
+    external: true

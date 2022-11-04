@@ -1,0 +1,16 @@
+services:
+  db:
+    restart: always
+    volumes:
+      - /home/ubuntu/docker-volume/ktor-todolist-mysql-data:/var/lib/mysql
+
+  phpmyadmin:
+    restart: always
+
+  api:
+    restart: always
+    environment:
+      DEVELOPMENT: false
+
+networks:
+  api-server:
