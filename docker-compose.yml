@@ -20,8 +20,6 @@ services:
 
   phpmyadmin:
     image: phpmyadmin
-    labels:
-      - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.grad1e.ddns.net`)
     ports:
       - 8081:80
     environment:
@@ -31,12 +29,9 @@ services:
       - db
     networks:
       - api-server
-      - traefik
 
   api:
-    build: .
-    labels:
-      - traefik.http.routers.api.rule=(Host(`todo.grad1e.ddns.net`) && PathPrefix('/api'))
+    build: .   
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 3306
@@ -51,10 +46,6 @@ services:
         condition: service_healthy
     networks:
       - api-server
-      - traefik
 
 networks:
   api-server:
-  traefik:
-    external: true
-    name: traefik-proxy

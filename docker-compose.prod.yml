@@ -6,11 +6,23 @@ services:
 
   phpmyadmin:
     restart: always
+    labels:
+      - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.grad1e.ddns.net`)
+    networks:
+      - traefik
+
 
   api:
     restart: always
+    labels:
+      - traefik.http.routers.api.rule=(Host(`todo.grad1e.ddns.net`) && PathPrefix(`/api`))
     environment:
       DEVELOPMENT: false
+    networks:
+      - traefik
+
 
 networks:
-  api-server:
+  traefik:
+    external: true
+    name: traefik_default
