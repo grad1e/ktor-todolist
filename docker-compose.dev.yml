@@ -2,16 +2,16 @@ services:
   db:
     restart: always
     volumes:
-      - /home/ubuntu/docker-volume/ktor-todolist-mysql-data:/var/lib/mysql
+      - C:/Users/Daryl/docker-volumes/dev-mysql:/var/lib/mysql
     networks:
-      - traefik
+      - traefik-proxy
 
   phpmyadmin:
     restart: always
     labels:
       - traefik.http.routers.phpmyadmin.rule=Host(`phpmyadmin.grad1e.ddns.net`)
     networks:
-      - traefik
+      - traefik-proxy
 
   api:
     restart: always
@@ -20,10 +20,10 @@ services:
     environment:
       DEVELOPMENT: false
     networks:
-      - traefik
+      - traefik-proxy
 
 
 networks:
-  traefik:
+  traefik-proxy:
     external: true
-    name: traefik_default
+    name: traefik_traefik-proxy

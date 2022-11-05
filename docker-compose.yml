@@ -7,8 +7,6 @@ services:
       MYSQL_DATABASE: todo_app
     ports:
       - 3306:3306
-    volumes:
-      - C:/Users/Daryl/docker-volumes/dev-mysql:/var/lib/mysql
     networks:
       - api-server
     healthcheck:
@@ -31,7 +29,7 @@ services:
       - api-server
 
   api:
-    build: .   
+    build: .
     environment:
       DATABASE_HOST: db
       DATABASE_PORT: 3306
